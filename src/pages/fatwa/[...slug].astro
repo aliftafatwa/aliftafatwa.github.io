@@ -1,0 +1,85 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import '../../styles/global.css';
+
+export async function getStaticPaths() {
+  const fatwas = await getCollection('fatwa');
+  return fatwas.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'fatwa'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const { title, idNumber, category, scholar, date, summary } = entry.data;
+
+const formattedDate = new Date(date).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} - Al-Fatwa Archive</title>
+  </head>
+  <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
+    
+    <!-- Top Navigation -->
+    <header class="bg-emerald-900 text-white shadow-md border-b border-emerald-800 py-4 px-4">
+      <div class="max-w-4xl mx-auto flex justify-between items-center">
+        <a href="/" class="text-xl font-bold text-amber-300">Al-Fatwa Archive</a>
+        <a href="/fatwas/1" class="text-xs text-emerald-200 hover:text-amber-300 transition-colors">&larr; Back to Directory</a>
+      </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8 flex-grow w-full">
+      <article class="bg-white p-6 md:p-10 rounded-xl border border-slate-200 shadow-sm space-y-6">
+        
+        <!-- Header Metadata -->
+        <div class="border-b border-slate-100 pb-6 space-y-3">
+          <div class="flex items-center space-x-3 text-xs">
+            <span class="bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-1 rounded-md border border-emerald-200">
+              {category}
+            </span>
+            <span class="text-slate-500">Fatwa #{idNumber}</span>
+            <span class="text-slate-400">•</span>
+            <span class="text-slate-500">{formattedDate}</span>
+          </div>
+
+          <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">
+            {title}
+          </h1>
+
+          <div class="text-xs text-slate-600 pt-1">
+            Issued by: <strong class="text-slate-800">{scholar}</strong>
+          </div>
+        </div>
+
+        <!-- Summary Callout -->
+        <div class="bg-slate-50 border-l-4 border-emerald-600 p-4 rounded-r text-sm text-slate-700 italic">
+          <strong>Summary:</strong> {summary}
+        </div>
+
+        <!-- Main Content -->
+        <div class="prose prose-slate max-w-none prose-headings:font-bold prose-headings:text-slate-900 prose-a:text-emerald-700 leading-relaxed text-sm md:text-base pt-2">
+          <Content />
+        </div>
+
+      </article>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-6 text-xs text-center border-t border-slate-800">
+      &copy; {new Date().getFullYear()} Al-Fatwa Archive. All rights reserved.
+    </footer>
+
+  </body>
+</html>
