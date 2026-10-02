@@ -1,16 +1,170 @@
 ---
+import '../styles/global.css';
 
+// Sample Fatwa Data
+const recentFatwas = [
+  {
+    id: '001',
+    title: 'Ruling on Combining Intentions in Voluntary Fasting',
+    category: 'Fasting (Siyam)',
+    scholar: 'Fatwa Council',
+    date: 'October 1, 2026',
+    summary: 'An analysis on whether one can combine the intention of making up missed Ramadan days with the six days of Shawwal.',
+    slug: '/fatwa/combining-fasting-intentions'
+  },
+  {
+    id: '002',
+    title: 'Guidelines for Islamic Investments in Modern Stocks',
+    category: 'Transactions (Muamalat)',
+    scholar: 'Shariah Advisory Board',
+    date: 'September 28, 2026',
+    summary: 'Key parameters and screening criteria for determining whether stock market shares comply with Islamic finance principles.',
+    slug: '/fatwa/stock-investment-guidelines'
+  },
+  {
+    id: '003',
+    title: 'Purification of Water Containing Subtle Impurities',
+    category: 'Purification (Taharah)',
+    scholar: 'Fatwa Committee',
+    date: 'September 20, 2026',
+    summary: 'A explanation of the volume threshold (Qullatayn) and physical state changes regarding water purity.',
+    slug: '/fatwa/purification-water-threshold'
+  }
+];
+
+const categories = [
+  'Aqeedah (Belief)',
+  'Taharah (Purification)',
+  'Salah (Prayer)',
+  'Zakat (Almsgiving)',
+  'Siyam (Fasting)',
+  'Muamalat (Transactions)'
+];
 ---
+
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Islamic Fatwa & Ruling Archive</title>
+  </head>
+  <body class="min-h-screen flex flex-col font-sans">
+    
+    <!-- Header / Navigation -->
+    <header class="bg-emerald-900 text-white shadow-md border-b border-emerald-800">
+      <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div>
+          <a href="/" class="text-2xl font-bold tracking-tight text-amber-300">Al-Fatwa Archive</a>
+          <p class="text-xs text-emerald-200">Verified Islamic Rulings & Legal Answers</p>
+        </div>
+        <nav class="hidden md:flex space-x-6 text-sm font-medium">
+          <a href="/" class="hover:text-amber-300 transition-colors">Home</a>
+          <a href="#categories" class="hover:text-amber-300 transition-colors">Categories</a>
+          <a href="#recent" class="hover:text-amber-300 transition-colors">Recent Rulings</a>
+          <a href="#about" class="hover:text-amber-300 transition-colors">About Us</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero / Search Section -->
+    <section class="bg-emerald-800 text-white py-12 px-4">
+      <div class="max-w-3xl mx-auto text-center space-y-6">
+        <h1 class="text-3xl md:text-4xl font-extrabold tracking-normal">
+          Search Verifiable Islamic Rulings
+        </h1>
+        <p class="text-emerald-100 text-sm md:text-base">
+          Browse verified Q&A categorized by Islamic jurisprudence (Fiqh) and creed.
+        </p>
+        
+        <!-- Search Input Bar -->
+        <div class="relative max-w-xl mx-auto">
+          <input 
+            type="text" 
+            placeholder="Search fatwa by topic, keyword, or number..." 
+            class="w-full py-3 pl-4 pr-12 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400 shadow-md"
+          />
+          <button class="absolute right-2 top-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-md text-sm transition-colors">
+            Search
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 py-10 flex-grow grid grid-cols-1 lg:grid-cols-4 gap-8">
+      
+      <!-- Recent Fatwas List (Left/Main Column) -->
+      <section id="recent" class="lg:col-span-3 space-y-6">
+        <div class="border-b border-slate-200 pb-3 flex items-center justify-between">
+          <h2 class="text-xl font-bold text-slate-800">Latest Legal Questions & Answers</h2>
+          <span class="text-xs text-slate-500">Updated Regularly</span>
+        </div>
+
+        <div class="space-y-4">
+          {recentFatwas.map((fatwa) => (
+            <article class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+                <span class="bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-0.5 rounded border border-emerald-200">
+                  {fatwa.category}
+                </span>
+                <span>Fatwa #{fatwa.id} • {fatwa.date}</span>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 mb-2 hover:text-emerald-700">
+                <a href={fatwa.slug}>{fatwa.title}</a>
+              </h3>
+              <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                {fatwa.summary}
+              </p>
+              <div class="flex items-center justify-between text-xs border-t border-slate-100 pt-3">
+                <span class="text-slate-500">Issued by: <strong class="text-slate-700">{fatwa.scholar}</strong></span>
+                <a href={fatwa.slug} class="text-emerald-700 font-medium hover:underline flex items-center space-x-1">
+                  <span>Read Full Ruling</span>
+                  <span>&rarr;</span>
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <!-- Sidebar Column (Right) -->
+      <aside class="space-y-6">
+        <!-- Categories Widget -->
+        <div id="categories" class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+          <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-3 pb-2 border-b border-slate-100">
+            Browse by Topic
+          </h3>
+          <ul class="space-y-2 text-sm">
+            {categories.map((cat) => (
+              <li>
+                <a href="#" class="text-slate-600 hover:text-emerald-700 hover:bg-slate-50 px-2 py-1 rounded block transition-colors">
+                  {cat}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Disclaimers / Information Widget -->
+        <div id="about" class="bg-amber-50 border border-amber-200 p-4 rounded-lg text-xs text-amber-900 space-y-2">
+          <h4 class="font-bold text-amber-950">Notice on Legal Answers</h4>
+          <p>
+            The rulings archived here are based on established scholarly evidence. For specific personal matters, consult a qualified local authority directly.
+          </p>
+        </div>
+      </aside>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-xs">
+      <div class="max-w-6xl mx-auto px-4 text-center space-y-2">
+        <p>&copy; {new Date().getFullYear()} Islamic Fatwa Archive. Hosted on GitHub Pages.</p>
+        <p class="text-slate-500">Built with Astro & Tailwind CSS.</p>
+      </div>
+    </footer>
+
+  </body>
 </html>
