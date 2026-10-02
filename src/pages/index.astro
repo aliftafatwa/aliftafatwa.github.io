@@ -1,44 +1,23 @@
 ---
+import { getCollection } from 'astro:content';
 import '../styles/global.css';
 
-// Sample Fatwa Data
-const recentFatwas = [
-  {
-    id: '001',
-    title: 'Ruling on Combining Intentions in Voluntary Fasting',
-    category: 'Fasting (Siyam)',
-    scholar: 'Fatwa Council',
-    date: 'October 1, 2026',
-    summary: 'An analysis on whether one can combine the intention of making up missed Ramadan days with the six days of Shawwal.',
-    slug: '/fatwa/combining-fasting-intentions'
-  },
-  {
-    id: '002',
-    title: 'Guidelines for Islamic Investments in Modern Stocks',
-    category: 'Transactions (Muamalat)',
-    scholar: 'Shariah Advisory Board',
-    date: 'September 28, 2026',
-    summary: 'Key parameters and screening criteria for determining whether stock market shares comply with Islamic finance principles.',
-    slug: '/fatwa/stock-investment-guidelines'
-  },
-  {
-    id: '003',
-    title: 'Purification of Water Containing Subtle Impurities',
-    category: 'Purification (Taharah)',
-    scholar: 'Fatwa Committee',
-    date: 'September 20, 2026',
-    summary: 'A explanation of the volume threshold (Qullatayn) and physical state changes regarding water purity.',
-    slug: '/fatwa/purification-water-threshold'
-  }
-];
+// Fetch all fatwas from the content collection
+const allFatwas = await getCollection('fatwa');
 
+// Sort by date (newest first) and take top 5 for the homepage
+const recentFatwas = allFatwas
+  .sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
+  .slice(0, 5);
+
+// Extract unique categories or keep static list
 const categories = [
-  'Aqeedah (Belief)',
-  'Taharah (Purification)',
-  'Salah (Prayer)',
-  'Zakat (Almsgiving)',
-  'Siyam (Fasting)',
-  'Muamalat (Transactions)'
+  'Aqeedah',
+  'Taharah',
+  'Salah',
+  'Zakat',
+  'Siyam',
+  'Muamalat'
 ];
 ---
 
@@ -50,7 +29,7 @@ const categories = [
     <meta name="generator" content={Astro.generator} />
     <title>Islamic Fatwa & Ruling Archive</title>
   </head>
-  <body class="min-h-screen flex flex-col font-sans">
+  <body class="min-h-screen flex flex-col font-sans bg-slate-50 text-slate-900 antialiased">
     
     <!-- Header / Navigation -->
     <header class="bg-emerald-900 text-white shadow-md border-b border-emerald-800">
@@ -61,8 +40,8 @@ const categories = [
         </div>
         <nav class="hidden md:flex space-x-6 text-sm font-medium">
           <a href="/" class="hover:text-amber-300 transition-colors">Home</a>
+          <a href="/fatwas/1/" class="hover:text-amber-300 transition-colors">All Fatwas</a>
           <a href="#categories" class="hover:text-amber-300 transition-colors">Categories</a>
-          <a href="#recent" class="hover:text-amber-300 transition-colors">Recent Rulings</a>
           <a href="#about" class="hover:text-amber-300 transition-colors">About Us</a>
         </nav>
       </div>
@@ -99,33 +78,43 @@ const categories = [
       <section id="recent" class="lg:col-span-3 space-y-6">
         <div class="border-b border-slate-200 pb-3 flex items-center justify-between">
           <h2 class="text-xl font-bold text-slate-800">Latest Legal Questions & Answers</h2>
-          <span class="text-xs text-slate-500">Updated Regularly</span>
+          <a href="/fatwas/1/" class="text-xs text-emerald-700 font-semibold hover:underline">View All ({allFatwas.length}) &rarr;</a>
         </div>
 
         <div class="space-y-4">
-          {recentFatwas.map((fatwa) => (
-            <article class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-              <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
-                <span class="bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-0.5 rounded border border-emerald-200">
-                  {fatwa.category}
-                </span>
-                <span>Fatwa #{fatwa.id} • {fatwa.date}</span>
-              </div>
-              <h3 class="text-lg font-bold text-slate-900 mb-2 hover:text-emerald-700">
-                <a href={fatwa.slug}>{fatwa.title}</a>
-              </h3>
-              <p class="text-slate-600 text-sm mb-4 leading-relaxed">
-                {fatwa.summary}
-              </p>
-              <div class="flex items-center justify-between text-xs border-t border-slate-100 pt-3">
-                <span class="text-slate-500">Issued by: <strong class="text-slate-700">{fatwa.scholar}</strong></span>
-                <a href={fatwa.slug} class="text-emerald-700 font-medium hover:underline flex items-center space-x-1">
-                  <span>Read Full Ruling</span>
-                  <span>&rarr;</span>
-                </a>
-              </div>
-            </article>
-          ))}
+          {recentFatwas.map((fatwa) => {
+            const { title, idNumber, category, scholar, date, summary } = fatwa.data;
+            const formattedDate = new Date(date).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric'
+            });
+            const linkUrl = `/fatwa/${fatwa.slug}/`; // Trailing slash for GitHub Pages compatibility
+
+            return (
+              <article class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+                  <span class="bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-0.5 rounded border border-emerald-200">
+                    {category}
+                  </span>
+                  <span>Fatwa #{idNumber} • {formattedDate}</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2 hover:text-emerald-700">
+                  <a href={linkUrl}>{title}</a>
+                </h3>
+                <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                  {summary}
+                </p>
+                <div class="flex items-center justify-between text-xs border-t border-slate-100 pt-3">
+                  <span class="text-slate-500">Issued by: <strong class="text-slate-700">{scholar}</strong></span>
+                  <a href={linkUrl} class="text-emerald-700 font-medium hover:underline flex items-center space-x-1">
+                    <span>Read Full Ruling</span>
+                    <span>&rarr;</span>
+                  </a>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </section>
 
@@ -139,7 +128,7 @@ const categories = [
           <ul class="space-y-2 text-sm">
             {categories.map((cat) => (
               <li>
-                <a href="#" class="text-slate-600 hover:text-emerald-700 hover:bg-slate-50 px-2 py-1 rounded block transition-colors">
+                <a href={`/fatwas/1/`} class="text-slate-600 hover:text-emerald-700 hover:bg-slate-50 px-2 py-1 rounded block transition-colors">
                   {cat}
                 </a>
               </li>
