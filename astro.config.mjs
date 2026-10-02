@@ -5,12 +5,10 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://aliftafatwa.github.io',
   base: '/',
-  trailingSlash: 'always',
-
+  trailingSlash: 'ignore',
   build: {
-    format: 'directory'
+    format: 'file'
   },
-
   vite: {
     plugins: [tailwindcss()]
   }
