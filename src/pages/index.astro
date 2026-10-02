@@ -112,7 +112,7 @@ const categories = [
                 <span>Fatwa #{fatwa.id} • {fatwa.date}</span>
               </div>
               <h3 class="text-lg font-bold text-slate-900 mb-2 hover:text-emerald-700">
-                <a href={`/fatwa/${fatwa.slug}/`}>{fatwa.title}</a>
+                <a href={fatwa.slug}>{fatwa.title}</a>
               </h3>
               <p class="text-slate-600 text-sm mb-4 leading-relaxed">
                 {fatwa.summary}
