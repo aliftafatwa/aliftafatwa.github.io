@@ -6,8 +6,5 @@ export default defineConfig({
   trailingSlash: 'always',
   build: {
     format: 'directory'
-  },
-  vite: {
-    plugins: [tailwindcss()],
   }
 });
